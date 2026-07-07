@@ -116,6 +116,15 @@ resource "azurerm_linux_virtual_machine" "vm_caso2" {
   admin_password = "P@ssw0rd1234!"
 
   disable_password_authentication = false
+
+   custom_data = base64encode(<<-EOF
+              #!/bin/bash
+              sudo apt-get update -y
+              sudo apt-get install -y software-properties-common
+              sudo add-apt-repository --yes --update ppa:ansible/ansible
+              sudo apt-get install -y ansible
+              EOF
+  )
 }
 
 #associate the network security group with the network interface
