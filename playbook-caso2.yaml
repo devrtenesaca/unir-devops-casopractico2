@@ -1,0 +1,15 @@
+---
+-
+  hosts: localhost
+  gather_facts: true
+
+  tasks:
+    - name: obtener los oututs de terraform
+      command: terraform output -json
+      args: 
+        chdir: "./infra"
+      register: tf_output_raw
+    
+    - name: Mostrar la IP pública
+      debug:
+         var: tf_output_raw

@@ -11,7 +11,7 @@ variable "location" {
 variable "tags" {
   description = "Tags to apply to resources"
   type        = map(string)
-  default     = {
+  default = {
     environment = "casopractico2"
     created_by  = "terraform"
   }

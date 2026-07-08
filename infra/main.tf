@@ -8,12 +8,14 @@ resource "azurerm_resource_group" "rg_caso2" {
 
 }
 
+
+
 resource "azurerm_virtual_network" "vnet_caso2" {
   name                = "${var.prefix}-vnet-devops"
   location            = var.location
   resource_group_name = azurerm_resource_group.rg_caso2.name
   address_space       = ["10.10.0.0/16"]
-tags = var.tags
+  tags                = var.tags
 }
 resource "azurerm_subnet" "subnet_caso2" {
   name                 = "${var.prefix}-subnet-devops"
@@ -22,13 +24,14 @@ resource "azurerm_subnet" "subnet_caso2" {
   address_prefixes     = ["10.10.1.0/24"]
 }
 
+#create container registry
 resource "azurerm_container_registry" "acr_registry" {
-  name                     = "acrcasoproctico01"
-  resource_group_name      = azurerm_resource_group.rg_caso2.name
-  location                 = var.location
-  sku                      = "Basic"
-  admin_enabled            = true
-  
+  name                = "acrcasoproctico01"
+  resource_group_name = azurerm_resource_group.rg_caso2.name
+  location            = var.location
+  sku                 = "Basic"
+  admin_enabled       = true
+
 }
 # create network security group
 resource "azurerm_network_security_group" "nsg_caso2" {
@@ -117,12 +120,12 @@ resource "azurerm_linux_virtual_machine" "vm_caso2" {
 
   disable_password_authentication = false
 
-   custom_data = base64encode(<<-EOF
+  custom_data = base64encode(<<-EOF
               #!/bin/bash
               sudo apt-get update -y
               sudo apt-get install -y software-properties-common
               sudo add-apt-repository --yes --update ppa:ansible/ansible
-              sudo apt-get install -y ansible
+              sudo apt-get install -y ansible podman
               EOF
   )
 }
