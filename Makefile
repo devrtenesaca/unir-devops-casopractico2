@@ -36,6 +36,13 @@ deploy_caso2:
 	$(MAKE) validate
 	$(MAKE) apply
 
+#------------------------------------------
+#build and push docker image to ACR
+#------------------------------------------
+build_push_image:
+	@echo "Building and pushing Docker image to ACR..."
+	@ansible-playbook -i inventory playbook-built.yaml
+
 destroy_caso2:
 	@echo "Destroying infra Caso 2..."
 	$(MAKE) destroy

@@ -1,0 +1,45 @@
+---
+-
+  hosts: localhost
+  gather_facts: true
+
+  tasks:
+
+  #-----------------------
+  #Obtener outputs de terraform
+  #-------------------------
+    - name: obtener los oututs de terraform
+      command: terraform output -json
+      args: 
+        chdir: "./infra"
+      register: tf_outputs
+#----------------------- 
+#variable set
+#-------------------------
+    - name: Set facts
+      set_fact:
+        acr_server: "{{ (tf_outputs.stdout | from_json).acr_login_server.value }}"
+        acr_user: "{{ (tf_outputs.stdout | from_json).acr_admin_username.value }}"
+        acr_pass: "{{ (tf_outputs.stdout | from_json).acr_admin_password.value }}"
+#-----------------------
+#Login en ACR
+#-------------------------
+    - name: Login en ACR
+      #containers.podman.podman_login:
+      community.docker.docker_login:
+        registry_url: "{{ acr_server }}"
+        username: "{{ acr_user }}"
+        password: "{{ acr_pass }}"
+
+#-----------------------
+#Build y Push de la imagen al ACR
+#-------------------------
+    - name: Build and Push
+      community.docker.docker_image:      
+      #containers.podman.podman_image:
+        build:
+          path: "./fifa-app" 
+        name: "{{ acr_server }}/fifa-app"
+        tag: "latest"
+        push: yes
+        source: build

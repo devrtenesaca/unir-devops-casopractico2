@@ -1,3 +1,4 @@
 flask
 flask-httpauth
 gunicorn
+Flask-HTTPAuth==4.8.0
