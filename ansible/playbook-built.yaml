@@ -11,7 +11,7 @@
     - name: obtener los oututs de terraform
       command: terraform output -json
       args: 
-        chdir: "./infra"
+        chdir: "../infra"
       register: tf_outputs
 #----------------------- 
 #variable set
@@ -38,7 +38,7 @@
       community.docker.docker_image:      
       #containers.podman.podman_image:
         build:
-          path: "./fifa-app" 
+          path: "../fifa-app" 
         name: "{{ acr_server }}/fifa-app"
         tag: "latest"
         push: yes

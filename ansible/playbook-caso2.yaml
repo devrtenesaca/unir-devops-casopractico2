@@ -1,6 +1,6 @@
 ---
 -
-  hosts: localhost
+  hosts: 
   gather_facts: true
 
   tasks:
@@ -46,3 +46,15 @@
       containers.podman.podman_image:
         name: "{{ acr_login_server }}/myapp:latest"
         pull: true
+
+#-----------------------
+#Ejecutar la imagen en el servidor web
+#-------------------------
+    - name: Ejecutar la imagen en el servidor web
+      containers.podman.podman_container:
+        name: myapp_container
+        image: "{{ acr_login_server }}/myapp:latest"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "8080:80"

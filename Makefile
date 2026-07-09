@@ -1,6 +1,9 @@
 LOCATION ?= chilecentral
 PREFIX ?= unir-caso2
-TAG=
+TF_DIR ?= infra
+ANSIBLE_DIR := ansible
+INVENTORY := inventory.ini
+TAG=caso2
 
 infra:
 .PHONY: infra
@@ -29,6 +32,14 @@ destroy:
 	cd infra/$* &&\
 	terraform destroy -auto-approve
 
+ansible_inventory:
+	@echo "Generating Ansible inventory..."
+	@mkdir -p $(ANSIBLE_DIR)
+	@echo "[webserver]" > $(ANSIBLE_DIR)/$(INVENTORY)
+	@echo "$$(cd $(TF_DIR) && terraform output -raw vm_public_ip)" \
+	ansible_user="opensip" ansible_password="P@ssw0rd1234!" >> $(ANSIBLE_DIR)/$(INVENTORY) \ 
+	
+	
 deploy_caso2:
 	@echo "Deploying Caso 2..."
 	$(MAKE) init
