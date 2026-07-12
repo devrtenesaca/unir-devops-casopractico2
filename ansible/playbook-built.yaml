@@ -33,13 +33,22 @@
 
 #-----------------------
 #Build y Push de la imagen al ACR
-#-------------------------
-    - name: Build and Push
-      community.docker.docker_image:      
-      #containers.podman.podman_image:
-        build:
-          path: "../fifa-app" 
-        name: "{{ acr_server }}/fifa-app"
-        tag: "latest"
-        push: yes
-        source: build
+# #-------------------------
+#     - name: Build and Push
+#       community.docker.docker_image:      
+#       #containers.podman.podman_image:
+#         build:
+#           path: "../fifa-app" 
+#           platform: "linux/amd64"
+#         name: "{{ acr_server }}/fifa-app"
+#         tag: "latest"
+#         push: yes
+#         source: build
+
+    - name: Build and Push AMD64 image
+      command: >
+        docker buildx build
+        --platform linux/amd64
+        -t {{ acr_server }}/fifa-app:latest
+        --push
+        ../fifa-app

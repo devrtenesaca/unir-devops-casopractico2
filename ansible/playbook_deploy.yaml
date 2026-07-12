@@ -1,7 +1,8 @@
 ---
 - name: Deploy Infrastructure
   hosts: webserver
-  gather_facts: false
+  become: true
+  gather_facts: true
 
   tasks:
     - name: Ping all hosts
@@ -48,9 +49,25 @@
 #-------------------------
     - name: Ejecutar la imagen en el servidor web
       containers.podman.podman_container:
-        name: myapp_container
+        name: fifa_app
         image: "{{ acr_server }}/fifa-app:latest"
         state: started
         restart_policy: always
         published_ports:
-          - "8080:5000"
+          - "443:443"
+        generate_systemd: 
+          path: /etc/systemd/system/
+          names: true
+          
+          
+#recargar systemd para que reconozca el nuevo servicio
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+# Habilitar e iniciar el servicio del contenedor
+    - name: Enable and start the container service
+      ansible.builtin.systemd:
+        name: container-fifa_app.service
+        enabled: true
+        state: started

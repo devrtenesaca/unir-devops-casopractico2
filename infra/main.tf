@@ -1,10 +1,7 @@
 resource "azurerm_resource_group" "rg_caso2" {
   name     = "${var.prefix}-devops"
   location = var.location
-  tags = {
-    environment = "unir-caso2-devops"
-    created_by  = "terraform"
-  }
+  tags     = var.tags
 
 }
 
@@ -56,7 +53,7 @@ resource "azurerm_network_security_group" "nsg_caso2" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "8080"
+    destination_port_range     = "80"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -102,6 +99,7 @@ resource "azurerm_linux_virtual_machine" "vm_caso2" {
   resource_group_name   = azurerm_resource_group.rg_caso2.name
   network_interface_ids = [azurerm_network_interface.nic_caso2.id]
   size                  = "Standard_D2s_v3"
+  admin_username        = "adminuser" # Debe coincidir con el nombre de usuario en admin_ssh_key
 
   os_disk {
     caching              = "ReadWrite"
@@ -115,10 +113,15 @@ resource "azurerm_linux_virtual_machine" "vm_caso2" {
     version   = "latest"
   }
 
-  admin_username = "opensip"
-  admin_password = "P@ssw0rd1234!"
+  # admin_username = "opensip"
+  # admin_password = "P@ssw0rd1234!"
+  #disable_password_authentication = false
+  admin_ssh_key {
+    username   = "adminuser"               # Debe coincidir con admin_username
+    public_key = file("~/.ssh/id_rsa.pub") # Ruta a tu llave pública
+  }
 
-  disable_password_authentication = false
+
 
   custom_data = base64encode(<<-EOF
               #!/bin/bash
