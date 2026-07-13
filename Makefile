@@ -3,8 +3,8 @@ PREFIX ?= unir-caso2
 TF_DIR ?= infra
 ANSIBLE_DIR := ansible
 INVENTORY := inventory.ini
-TAG=caso2
-SSH_KEY_DIR = $(HOME)/.ssh
+TAG=casopractico2
+SSH_KEY_DIR = ~/.ssh
 SSH_KEY_NAME = id_rsa
 SSH_PUB_KEY = $(SSH_KEY_DIR)/$(SSH_KEY_NAME).pub
 SSH_PRIV_KEY = $(SSH_KEY_DIR)/$(SSH_KEY_NAME)
@@ -72,9 +72,11 @@ deploy_caso2:
 	$(MAKE) infra_init
 	$(MAKE) infra_fmt
 	$(MAKE) infra_validate
+	$(MAKE) check_ssh_keys
 	$(MAKE) infra_apply
 	$(MAKE) ansible_inventory
 	$(MAKE) ansible_build_push_image
+	$(MAKE) ansible_deploy
 
 
 

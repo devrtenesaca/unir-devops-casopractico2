@@ -7,6 +7,15 @@
   tasks:
     - name: Ping all hosts
       ansible.builtin.ping:
+      
+    - name: Actualizar caché de apt
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Instalar Podman
+      ansible.builtin.apt:
+        name: podman
+        state: present
 
 #-----------------------
   #Obtener outputs de terraform
@@ -42,7 +51,7 @@
     - name: Descargar la imagen del ACR
       containers.podman.podman_image:
       #community.docker.docker_image:
-        name: "{{ acr_server }}/fifa-app:latest"  
+        name: "{{ acr_server }}/fifa-app:casopractico2"  
         pull: true
 #-----------------------
 #Ejecutar la imagen en el servidor web
@@ -50,7 +59,7 @@
     - name: Ejecutar la imagen en el servidor web
       containers.podman.podman_container:
         name: fifa_app
-        image: "{{ acr_server }}/fifa-app:latest"
+        image: "{{ acr_server }}/fifa-app:casopractico2"
         state: started
         restart_policy: always
         published_ports:
@@ -71,3 +80,7 @@
         name: container-fifa_app.service
         enabled: true
         state: started
+
+    - name: Mostrar IP pública
+      ansible.builtin.debug:
+        msg: "La aplicación está desplegada en https://{{ inventory_hostname }}"
